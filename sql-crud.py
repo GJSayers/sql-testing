@@ -20,6 +20,16 @@ class Programmer(base):
     famous_for = Column(String)
 
 
+class FavouriteCountry(base):
+    __tablename__ = "Favourite Countries"
+    id = Column(Integer, primary_key=True)
+    country_name = Column(String)
+    country_capital_city = Column(String)
+    country_currency = Column(String)
+    country_food = Column(String)
+    famous_for = Column(String)
+
+
 # instead of connecting to the database directly, we will ask for a session
 # create a new instance of sessionmaker, then point to our engine (the db)
 Session = sessionmaker(db)
@@ -86,6 +96,35 @@ gemma_sayers = Programmer(
     famous_for="Enjoying the small things!"
 )
 
+italy = FavouriteCountry(
+    country_name="Italy",
+    country_capital_city="Rome",
+    country_currency="Euro",
+    country_food="Pizza",
+    famous_for="Food, architechture and cars"
+)
+
+greece = FavouriteCountry(
+    country_name="Greece",
+    country_capital_city="Athens",
+    country_currency="Euro",
+    country_food="Calamari, Lamb, fish, salad",
+    famous_for="Food, hospitality, beautiful islands, historical architecture"
+)
+
+fakey = FavouriteCountry(
+    country_name="Not a real country",
+    country_capital_city="Anywhere",
+    country_currency="Monopoly",
+    country_food="flower burgers",
+    famous_for="Not existing"
+)
+
+# add each instance of our countries to our session
+# session.add(italy)
+# session.add(greece)
+session.add(fakey)
+
 # add each instance of our programmers to our session
 # session.add(ada_lovelace)
 # session.add(alan_turing)
@@ -118,31 +157,52 @@ gemma_sayers = Programmer(
 
 
 # deleting a single record
-fname = input("Enter a first name: ")
-lname = input("Enter a last name: ")
-programmer = session.query(Programmer).filter_by(first_name=fname, last_name=lname).first()
-# defensive programming
-if programmer is not None:
-    print("Programmer found: ", programmer.first_name + " " + programmer.last_name)
-    confirmation = input("Are you sure you want to delete this record? (y/n) ")
-    if confirmation.lower() == "y":
-        session.delete(programmer)
-        session.commit()
-        print("Programmer has been deleted")
-    else:
-        print("Programmer not deleted")
-else:
-    print("No records found")
+# fname = input("Enter a first name: ")
+# lname = input("Enter a last name: ")
+# programmer = session.query(Programmer).filter_by(first_name=fname, last_name=lname).first()
+# # defensive programming
+# if programmer is not None:
+#     print("Programmer found: ", programmer.first_name + " " + programmer.last_name)
+#     confirmation = input("Are you sure you want to delete this record? (y/n) ")
+#     if confirmation.lower() == "y":
+#         session.delete(programmer)
+#         session.commit()
+#         print("Programmer has been deleted")
+#     else:
+#         print("Programmer not deleted")
+# else:
+#     print("No records found")
 
 
-# query the db to find all the programmers
-programmers = session.query(Programmer)
-for programmer in programmers:
+# # query the db to find all the programmers
+# programmers = session.query(Programmer)
+# for programmer in programmers:
+#     print(
+#         programmer.id,
+#         programmer.first_name + " " + programmer.last_name,
+#         programmer.gender,
+#         programmer.nationality,
+#         programmer.famous_for,
+#         sep=" | "
+#     )
+
+# country = session.query(FavouriteCountry).filter_by(id=1).first()
+# country.famous_for = "Roman History, food, cars, wine, la dolce vita"
+
+# commit session to the db
+# session.commit()
+
+# # query the db to find all the countries
+countries = session.query(FavouriteCountry)
+for country in countries:
     print(
-        programmer.id,
-        programmer.first_name + " " + programmer.last_name,
-        programmer.gender,
-        programmer.nationality,
-        programmer.famous_for,
+        country.id,
+        country.country_name,
+        country.country_capital_city,
+        country.country_currency,
+        country.country_food,
+        country.famous_for,
         sep=" | "
     )
+
+
