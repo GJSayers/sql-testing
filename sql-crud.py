@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 db = create_engine("postgresql:///chinook")
 base = declarative_base()
 
+
 # create a class-based model for the programmer table
 class Programmer(base):
     __tablename__ = "Programmer"
@@ -17,8 +18,6 @@ class Programmer(base):
     gender = Column(String)
     nationality = Column(String)
     famous_for = Column(String)
-
-
 
 
 # instead of connecting to the database directly, we will ask for a session
@@ -32,19 +31,19 @@ base.metadata.create_all(db)
 
 # creating record on our programmer table
 ada_lovelace = Programmer(
-    first_name = "Ada",
-    last_name = "Lovelace",
-    gender = "F",
-    nationality = "British",
-    famous_for = "First Programmer"
+    first_name="Ada",
+    last_name="Lovelace",
+    gender="F",
+    nationality="British",
+    famous_for="First Programmer"
 )
 
 alan_turing = Programmer(
-    first_name = "Alan",
-    last_name = "Turing",
-    gender = "M",
-    nationality = "British",
-    famous_for = "Modern Computing"
+    first_name="Alan",
+    last_name="Turing",
+    gender="M",
+    nationality="British",
+    famous_for="Modern Computing"
 )
 
 grace_hopper = Programmer(
@@ -79,19 +78,62 @@ tim_berners_lee = Programmer(
     famous_for="World Wide Web"
 )
 
+gemma_sayers = Programmer(
+    first_name="Gemma",
+    last_name="Sayers",
+    gender="F",
+    nationality="British",
+    famous_for="Enjoying the small things!"
+)
+
 # add each instance of our programmers to our session
 # session.add(ada_lovelace)
 # session.add(alan_turing)
-session.add(grace_hopper)
-session.add(margaret_hamilton)
-session.add(bill_gates)
-session.add(tim_berners_lee)
+# session.add(grace_hopper)
+# session.add(margaret_hamilton)
+# session.add(bill_gates)
+# session.add(tim_berners_lee)
+# session.add(gemma_sayers)
 # add each of the programmers to our session
 
 
 
+# updating a single record - using .first() means avoiding having to yse a for -loop for the iteration
+# programmer = session.query(Programmer).filter_by(id=7).first()
+# programmer.famous_for = "Budget cooking!"
+
 # commit session to the db
-session.commit()
+# session.commit()
+
+# updating multiple records
+# people = session.query(Programmer)
+# for person in people:
+#     if person.gender == "F":
+#         person.gender = "Female"
+#     elif person.gender == "M":
+#         person.gender = "Male"
+#     else:
+#         print("Gender not defined")
+#     session.commit()
+
+
+# deleting a single record
+fname = input("Enter a first name: ")
+lname = input("Enter a last name: ")
+programmer = session.query(Programmer).filter_by(first_name=fname, last_name=lname).first()
+# defensive programming
+if programmer is not None:
+    print("Programmer found: ", programmer.first_name + " " + programmer.last_name)
+    confirmation = input("Are you sure you want to delete this record? (y/n) ")
+    if confirmation.lower() == "y":
+        session.delete(programmer)
+        session.commit()
+        print("Programmer has been deleted")
+    else:
+        print("Programmer not deleted")
+else:
+    print("No records found")
+
 
 # query the db to find all the programmers
 programmers = session.query(Programmer)
@@ -102,5 +144,5 @@ for programmer in programmers:
         programmer.gender,
         programmer.nationality,
         programmer.famous_for,
-        sep = " | "
+        sep=" | "
     )
